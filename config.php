@@ -1,21 +1,19 @@
 <?php
 
-$global="franciscoigor@gmail.com";
-
 
 
 return [
 	"referer"=>[
-		"http://franciscoigor.me/contact.html"=>$global,
+		"http://franciscoigor.me/contact.html"=>"recipientemail@server.com",
 	],
 	"host"=>[
-		"franciscoigor.me"=>$global,
+		"franciscoigor.me"=>"recipientemail@server.com",
 	],
 	"ip"=>[
-		"154.5.201.102"=>$global,
+		"154.5.201.102"=>"recipientemail@server.com",
 	],
 	"apikey"=>[
-		"6AF8037C49D7DEA58027E723BB2BC387"=>$global,
+		"6AF8037C49D7DEA58027E723BB2BC387"=>"recipientemail@server.com",
 	]
 
 

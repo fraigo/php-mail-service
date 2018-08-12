@@ -53,10 +53,12 @@ $recipient=$recipient?:$config["ip"][$referer];
 $recipient=$recipient?:$config["referer"][$referer];
 $recipient=$recipient?:$config["host"][$host];
 
+$server_email = "sendmailuser@myserver.com";
+
 if ($recipient){
 	//recipient found
 	if (filter_var($from, FILTER_VALIDATE_EMAIL)){
-		$headers="FROM: $host <marketie@storm.megpanel.com>". "\r\n";
+		$headers="FROM: $host <$server_email>". "\r\n";
 		$headers.="Reply-to: $from". "\r\n";
 		$message="Message from $name ($from):\n\n $text\n\n\n Date: $date\n Ip: $ipaddr\n Reference: $referer\n";
 		foreach($_POST as $key=>$value){
