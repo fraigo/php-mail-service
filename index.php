@@ -28,8 +28,11 @@ $message=[];
 
 // get variables (only POST)
 $from=$_POST["email"];
+unset($_POST["email"]);
 $name=strip_tags($_POST["name"]);
+unset($_POST["name"]);
 $text=strip_tags($_POST["text"]);
+unset($_POST["text"]);
 // this variables could be GET or POST 
 $redir=$_REQUEST["redir"];
 $error=$_REQUEST["error"]?:$redir;
@@ -38,7 +41,8 @@ $apikey=$_REQUEST["apikey"];
 
 $referer=$_SERVER["HTTP_REFERER"];
 $ipaddr=$_SERVER["REMOTE_ADDR"];
-$host=$_SERVER["HTTP_HOST"];
+$originUrl=parse_url($_SERVER["HTTP_ORIGIN"]);
+$host=$originUrl["host"];
 
 // get the configuration rules
 $config=require("config.php");
@@ -49,12 +53,15 @@ $recipient=$recipient?:$config["ip"][$referer];
 $recipient=$recipient?:$config["referer"][$referer];
 $recipient=$recipient?:$config["host"][$host];
 
-
 if ($recipient){
 	//recipient found
 	if (filter_var($from, FILTER_VALIDATE_EMAIL)){
-		$headers="Reply-to: $from". "\r\n";
-		$message="Message from $name ($from):\n\n $text\n\n Date: $date\n\n Ip: $ipaddr\n\n Reference: $referer";
+		$headers="FROM: $host <marketie@storm.megpanel.com>". "\r\n";
+		$headers.="Reply-to: $from". "\r\n";
+		$message="Message from $name ($from):\n\n $text\n\n\n Date: $date\n Ip: $ipaddr\n Reference: $referer\n";
+		foreach($_POST as $key=>$value){
+			$message.=" ".ucfirst($key).": ".$value."\n";		
+		}
 		//$message.="\n\nDebug:$server",$headers);
 		$server=json_encode($_SERVER);
 		$result=mail($recipient,"Message from $host ($date)",$message,$headers);
@@ -67,12 +74,18 @@ if ($recipient){
 		//email not valid
 		header("HTTP/1.0 400 Bad request");
 		$message["error"]="Invalid email";
+		$message["ip"]="$ipaddr";
+		$message["host"]="$host";
+		$message["referer"]="$referer";
 	}
 
 }else{
 	//recipient not found
 	header("HTTP/1.0 403 Prohibited");
-	$message["error"]="Not autorized";
+	$message["error"]="Not authorized";
+	$message["ip"]="$ipaddr";
+	$message["host"]="$host";
+	$message["referer"]="$referer";
 }
 
 
