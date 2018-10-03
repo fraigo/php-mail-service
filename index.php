@@ -22,6 +22,7 @@
  */
 
 $date=date("d-m-Y H:i:s");
+$hostEmail="serveremail@server.com";
 
 // result message
 $message=[];
@@ -47,23 +48,31 @@ $host=$originUrl["host"];
 // get the configuration rules
 $config=require("config.php");
 
-// get the recipient address
-$recipient=$config["apikey"][$ipaddr];
-$recipient=$recipient?:$config["ip"][$referer];
+$recipient=$config["apikey"][$apikey];
+$recipient=$recipient?:$config["ip"][$ipaddr];
 $recipient=$recipient?:$config["referer"][$referer];
 $recipient=$recipient?:$config["host"][$host];
 
-$server_email = "sendmailuser@myserver.com";
+$vars=[];
+$vars["name"]=$name;
+$vars["from"]=$from;
+$vars["text"]=$text;
+$vars["date"]=$date;
+$vars["ipaddr"]=$ipaddr;
+$vars["referer"]=$referer;
+
+
+$template=file_get_contents("templates/default.txt");
+foreach($vars as $key=>$value){
+	$template=str_replace("\$".$key,$value,$template);
+}
 
 if ($recipient){
 	//recipient found
 	if (filter_var($from, FILTER_VALIDATE_EMAIL)){
-		$headers="FROM: $host <$server_email>". "\r\n";
-		$headers.="Reply-to: $from". "\r\n";
-		$message="Message from $name ($from):\n\n $text\n\n\n Date: $date\n Ip: $ipaddr\n Reference: $referer\n";
-		foreach($_POST as $key=>$value){
-			$message.=" ".ucfirst($key).": ".$value."\n";		
-		}
+		$headers="Reply-to: $from". "\r\n";
+		$headers.="From: \"$host\" <$hostEmail>\r\n";
+		$message=$template;
 		//$message.="\n\nDebug:$server",$headers);
 		$server=json_encode($_SERVER);
 		$result=mail($recipient,"Message from $host ($date)",$message,$headers);
