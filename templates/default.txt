@@ -1,0 +1,7 @@
+Message from $name ($from):
+----------------------------
+$text
+----------------------------
+ Date: $date
+ Ip: $ipaddr
+ Reference: $referer

@@ -1,5 +1,7 @@
 <?php
 
+$hostEmail="marketie@storm.megpanel.com";
+
 $global="franciscoigor@gmail.com";
 
 
@@ -10,6 +12,7 @@ return [
 	],
 	"host"=>[
 		"franciscoigor.me"=>$global,
+		"fenixfencing.ca"=>"contact@fenixfencing.ca",
 	],
 	"ip"=>[
 		"154.5.201.102"=>$global,
